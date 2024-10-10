@@ -1,0 +1,58 @@
+/* 外部盒子让里面的元素居中 */
+.container {
+    display: flex;
+    width: 100%;
+    height: 50vh;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    text-align: center;
+    color: #ecf0f1;
+    background-color: yellow;
+    border-radius: 0.8rem;
+    font-size: 1.2rem;
+}
+
+.face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 0.8rem;
+    transition: transform 0.5s ease-in-out;
+    backface-visibility: hidden;
+    background: rgb(131, 58, 180);
+    background: linear-gradient(
+      151deg,
+      rgba(131, 58, 180, 1) 0%,
+      rgba(253, 29, 29, 1) 50%,
+      rgba(252, 176, 69, 1) 100%
+    );
+  }
+
+  .face-back {
+    transform: rotateY(180deg);
+  }
+  .card:hover .face-front {
+    transform: rotateY(-180deg);
+  }
+  .card:hover .face-back {
+    transform: rotateY(0deg);
+  }
+  
+
+/* 让box居中 */
+.box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hide {
+    display: none;
+}
+

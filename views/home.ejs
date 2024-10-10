@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>home</title>
+</head>
+<body>
+    <div class="box">
+        <div class="container">
+        </div>
+        <p class="num">卡片数量<%=list.length%></p>
+        <p><%=counter%></p>
+        <button>下一个</button>
+    </div>
+
+    <script>
+        let btn = document.querySelector('button')
+        let container = document.querySelector('.container')
+        let numOfcards = document.querySelector('.num')
+        let counter = 0
+        async function getData(url) {
+            let res = await fetch(url)
+            let data = await res.json()
+            return data
+        }
+
+        window.onload = async function() {
+            // 初始数据
+            let data = await getData('http://localhost:3000/')
+            numOfcards.innerText = `现在是第：${counter}个问题`
+            let cardsHTML = getHTMLData(data) // 数组
+            //返回带不同类的数据
+            function getHTMLData(data) {
+                return data.map((card, index) => { 
+                if(index === counter ) {
+                return `        
+                    <div class="card">
+                        <div class="face face-front">${card.question}</div>
+                        <div class="face face-back">${card.answer}</div>
+                    </div>`
+                    
+                }else {
+                    return 
+                    `        
+                    <div class="card hide">
+                        <div class="face face-front">${card.question}</div>
+                        <div class="face face-back">${card.answer}</div>
+                    </div>`
+                    }
+                }
+                ).join('\n')
+            }
+            container.innerHTML = cardsHTML
+
+            btn.addEventListener('click', ()=> {
+                // 更新卡片
+                counter++
+                numOfcards.innerText = `现在是第：${counter}个问题`
+                let cardsHTML = getHTMLData(data)
+                container.innerHTML = cardsHTML
+            })
+        }
+
+    </script>
+</body>
+</html>
