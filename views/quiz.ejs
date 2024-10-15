@@ -11,12 +11,11 @@
         <div class="container">
         </div>
         <p class="num">卡片数量</p>
-        <button>删除</button>
-        <button class="next">下一个</button>
+        <button>下一个</button>
     </div>
 
     <script>
-        let next = document.querySelector('.next')
+        let btn = document.querySelector('button')
         let container = document.querySelector('.container')
         let numOfcards = document.querySelector('.num')
         let counter = 0
@@ -37,7 +36,6 @@
                 if(index === counter ) {
                 return `        
                     <div class="card">
-                        <div id=${card.id}>ID标签</div>
                         <div class="face face-front">${card.question}</div>
                         <div class="face face-back">${card.answer}</div>
                     </div>`
@@ -55,7 +53,7 @@
             }
             container.innerHTML = cardsHTML
 
-            next.addEventListener('click', ()=> {
+            btn.addEventListener('click', ()=> {
                 // 更新卡片
                 counter++
                 numOfcards.innerText = `现在是第：${counter}个问题`

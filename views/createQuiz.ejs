@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form>
+        <label for="question">question:</label>
+        <input type="text" name="question" id="question">
+        <label for="answer">answer:</label>
+        <input type="text" name="answer" id="answer">
+        <input type="submit"/>
+    </form>
+
+
+    <script>
+        const form = document.querySelector('form')
+        const question = document.getElementById("question")
+        const answer = document.getElementById('answer')
+
+        function hasQuestion(value) {
+            return value.length > 0
+        }
+        function hasAnswer(value) {
+            return value.length > 0
+        }
+
+        window.onload = function() {
+            form.onsubmit = function(event) {
+                event.preventDefault()
+                if(hasQuestion(question.value) && hasAnswer(answer.value)) {
+                    let obj = {question: question.value, answer: answer.value}
+                    console.log(obj)
+                    postData(obj)
+                }
+            }
+        }
+
+        function postData(obj) {
+            fetch("http://localhost:3000/createQuiz", {
+                method: 'POST',
+                body: JSON.stringify(obj),
+                headers: {
+                    'Content-Type': "application/json"
+                }
+            }).then(res => res.json())
+            .then(data => {
+                if(data.ok === 1) {
+                    window.location.href = data.redirectUrl;
+                } else {
+                    console.log('quiz 生成失败')
+                }
+            }).catch(error => console.log(error))
+        }
+        
+        
+    </script>
+</body>
+</html>
