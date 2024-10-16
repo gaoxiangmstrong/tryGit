@@ -30,7 +30,16 @@ app.use(function (req, res, next) {
     next()
 })
 
-app.get('/',async(req, res) => {
+function restrict(req, res, next) {
+    if (req.session.user) {
+      next();
+    } else {
+      req.session.error = 'Access denied!';
+      res.redirect('/login');
+    }
+}
+
+app.get('/',restrict, async(req, res) => {
     try {
         let cards = new Cards()
         await cards.queryDataAll()
