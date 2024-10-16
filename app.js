@@ -6,7 +6,6 @@ const { Cards } = require('./controller')
 const { hasUser } = require('./user')
 const cookieSession = require('express-session')
 const parseurl = require('parseurl')
-const escapeHtml = require('escape-html')
 
 
 // 环境配置中间件
@@ -66,13 +65,11 @@ app.get('/jsonData', async(req, res) => {
     let cards = new Cards()
     await cards.initData()
     let list = cards.list //数组
-    console.log(list)
     let counter = 0
     res.render('home', {list, counter})
 })
 
 app.get('/quiz', async(req, res) => {
-    console.log(req.session.views) // 一个对象
     res.render('quiz')
 })
 
@@ -136,6 +133,21 @@ app.get('/logout', function(req, res, next) {
 
 app.get('/foo', function (req, res, next) {
     res.send('you viewed this page ' + req.session.views['/foo'] + ' times')
+})
+
+// app.delete
+app.delete('/delete', async function(req, res, next) {
+    let card = new Cards();
+    // 拿到ID
+    let id = req.body.id
+    let deleteReq = await card.delete([id])
+    if(deleteReq.ok && deleteReq.ok === 1) {
+        res.json({
+            ok: 1,
+            message: "你成功了去重定向吧"
+        })
+    }
+
 })
 
 app.listen(port, ()=> {

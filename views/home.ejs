@@ -11,7 +11,7 @@
         <div class="container">
         </div>
         <p class="num">卡片数量</p>
-        <button>删除</button>
+        <button class="deleteBtn">删除</button>
         <button class="next">下一个</button>
     </div>
 
@@ -20,12 +20,20 @@
         let container = document.querySelector('.container')
         let numOfcards = document.querySelector('.num')
         let counter = 0
+        // 获取数据函数
         async function getData(url) {
             let res = await fetch(url)
             let data = await res.json()
             return data
         }
 
+        // 删除数据
+        async function deleteCard(id) {
+            let res = await fetch(url, {id})
+            let result = await res.json() // 验证删除成功
+            consule.log(result)
+        }
+    
         window.onload = async function() {
             // 初始数据
             let data = await getData('http://localhost:3000/')
@@ -40,8 +48,9 @@
                         <div id=${card.id}>ID标签</div>
                         <div class="face face-front">${card.question}</div>
                         <div class="face face-back">${card.answer}</div>
-                    </div>`
-                    
+                    </div>
+                    `
+
                 }else {
                     return 
                     `        
@@ -61,6 +70,26 @@
                 numOfcards.innerText = `现在是第：${counter}个问题`
                 let cardsHTML = getHTMLData(data)
                 container.innerHTML = cardsHTML
+                // 更新删除按钮ID
+                delBtn.id = counter
+            })
+
+            // 给页面的卡片的删除按钮添加这个卡片的ID
+            let delBtn = document.querySelector('.deleteBtn')
+            delBtn.id = counter
+            delBtn.addEventListener('click', function() {
+                fetch("/delete", {
+                    method: 'DELETE',
+                    body: JSON.stringify({id: delBtn.id}),
+                    headers: {
+                    'Content-Type': "application/json"
+                    }
+                }).then(res => res.json())
+                .then(data => {
+                    if(data.message && data.ok === 1) {
+                        window.location.href = '/jsonData'
+                    }
+                })
             })
         }
 

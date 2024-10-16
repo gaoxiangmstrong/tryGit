@@ -11,14 +11,16 @@
         <div class="container">
         </div>
         <p class="num">卡片数量</p>
-        <button>下一个</button>
+        <button class="deleteBtn">删除</button>
+        <button class="next">下一个</button>
     </div>
 
     <script>
-        let btn = document.querySelector('button')
+        let btn = document.querySelector('.next')
         let container = document.querySelector('.container')
         let numOfcards = document.querySelector('.num')
         let counter = 0
+
         async function getData(url) {
             let res = await fetch(url)
             let data = await res.json()
@@ -29,6 +31,7 @@
             // 初始数据
             let data = await getData('http://localhost:3000/')
             numOfcards.innerText = `现在是第：${counter}个问题`
+            // 
             let cardsHTML = getHTMLData(data) // 数组
             //返回带不同类的数据
             function getHTMLData(data) {
@@ -36,6 +39,7 @@
                 if(index === counter ) {
                 return `        
                     <div class="card">
+                        <div id=${card.id} class="hide cardId">${card.id}</div>
                         <div class="face face-front">${card.question}</div>
                         <div class="face face-back">${card.answer}</div>
                     </div>`
@@ -52,13 +56,33 @@
                 ).join('\n')
             }
             container.innerHTML = cardsHTML
-
             btn.addEventListener('click', ()=> {
                 // 更新卡片
                 counter++
                 numOfcards.innerText = `现在是第：${counter}个问题`
                 let cardsHTML = getHTMLData(data)
                 container.innerHTML = cardsHTML
+                // 更新删除按钮ID
+                delBtn.id = card.id
+            })
+
+            // 给页面的卡片的删除按钮添加这个卡片的ID
+            let delBtn = document.querySelector('.deleteBtn')
+            var card = document.querySelector('.cardId')
+            delBtn.id = card.id
+            delBtn.addEventListener('click', function() {
+                fetch("/delete", {
+                    method: 'DELETE',
+                    body: JSON.stringify({id: delBtn.id}),
+                    headers: {
+                    'Content-Type': "application/json"
+                    }
+                }).then(res => res.json())
+                .then(data => {
+                    if(data.message && data.ok === 1) {
+                        window.location.href = '/quiz'
+                    }
+                })
             })
         }
 

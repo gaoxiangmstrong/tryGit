@@ -35,7 +35,7 @@ class Cards {
         try {
             const sql = 'INSERT INTO quizs(`question`, `answer`) VALUES (?, ?)'
             const connection = await connectToDatabase() 
-            const [results] = await connection.query(sql, param)
+            const [results] = await connection.query(sql, param) // param: 数组
             if(results) {
                 return {
                     ok: 1
@@ -43,6 +43,25 @@ class Cards {
             }
         }catch(error) {
             console.log(error)
+        }
+    }
+
+    // 删除ID指定的数据
+    async delete(id) {
+        const sql = `DELETE FROM quizs WHERE id = ?`
+        const connection = await connectToDatabase()
+        const [result] = await connection.query(sql, id) // param: 数组
+        if(result) {
+            return {
+                ok: 1,
+                method:'delete',
+                query:'deleteRequest',
+                delete_id: id,
+                result: result
+            }
+        }
+        return {
+            ok: 0
         }
     }
 

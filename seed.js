@@ -53,26 +53,27 @@ async function main() {
     });
 
     try {
-        // data.forEach(async ({question, answer}) => {
-        //     try {
-        //         const sql = `INSERT INTO quizs (question, answer) VALUES (?, ?)`;
-        //         let [result, field] = await insertData(sql, [question, answer]);
-        //         console.log(result);
-        //         console.log(field);
-        //     } catch (err) {
-        //         console.log(err);
-        //     }
-        // });
+        data.forEach(async ({question, answer}) => {
+            try {
+                const sql = `INSERT INTO quizs (question, answer) VALUES (?, ?)`;
+                let [result, field] = await insertData(sql, [question, answer]);
+                console.log(result);
+                console.log(field);
+            } catch (err) {
+                console.log(err);
+            }
+        });
 
-        // async function insertData(sql, params) {
-        //     const [result, field] = await connection.query(sql, params);
-        //     return [result, field];
-        // }
+        async function insertData(sql, params) {
+            const [result, field] = await connection.query(sql, params);
+            console.log(result, field)
+            return [result, field];
+        }
         // 插入一个用户
-        const sql = `INSERT INTO users(username, password) VALUES(?, ?)`;
-        const [result, fields] = await connection.query(sql, ["gaoxiang", "q89589758"])
-        console.log(result);
-        console.log(fields)
+        // const sql = `INSERT INTO users(username, password) VALUES(?, ?)`;
+        // const [result, fields] = await connection.query(sql, ["haosheng", "123456"])
+        // console.log(result);
+        // console.log(fields)
     } finally {
         // 结束连接
         await connection.end();  // 使用 await
