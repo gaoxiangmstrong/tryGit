@@ -1,5 +1,5 @@
 const fs = require('fs').promises;
-const { connectToDatabase } = require('./mysqlConnection')
+const { connectToDatabase } = require('../../mysqlConnection')
 
 // 我要写一个简单的单词卡
 class Cards {
@@ -24,10 +24,14 @@ class Cards {
             const sql = 'SELECT * FROM quizs'
             const connection = await connectToDatabase()
             const [results] = await connection.query(sql)
+            console.log(results)
             this.list = results
         }catch (error) {
             console.log(error)
         }
+    }
+    async getCardId(count) {
+        return this.list[count].id
     }
 
     // 插入数据

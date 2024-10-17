@@ -2,8 +2,8 @@ const express = require('express')
 const path = require('path')
 const app = express()
 const port = 3000
-const { Cards } = require('./controller')
-const { hasUser } = require('./user')
+const { Cards } = require('./public/javascripts/Cards')
+const { hasUser } = require('./public/javascripts/user')
 const cookieSession = require('express-session')
 const parseurl = require('parseurl')
 
@@ -17,7 +17,7 @@ app.use(cookieSession({
     secret: "this is an ID",
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 10 * 1000 } // 10秒后cookie失效
+    cookie: { maxAge: 100000 * 1000 } // 10000秒后cookie失效
 }))
 
 // 中间件
@@ -158,6 +158,7 @@ app.delete('/delete', async function(req, res, next) {
     }
 
 })
+
 
 app.listen(port, ()=> {
     console.log("server begin")

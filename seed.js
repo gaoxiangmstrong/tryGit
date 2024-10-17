@@ -1,6 +1,6 @@
 // 这个文件用来插入json数据
 const mysql = require('mysql2/promise');
-
+const hash = require('pbkdf2-password')()
 const data = [
     {
       question: "什么是JavaScript中的闭包（closure）？",
@@ -53,27 +53,51 @@ async function main() {
     });
 
     try {
-        data.forEach(async ({question, answer}) => {
-            try {
-                const sql = `INSERT INTO quizs (question, answer) VALUES (?, ?)`;
-                let [result, field] = await insertData(sql, [question, answer]);
-                console.log(result);
-                console.log(field);
-            } catch (err) {
-                console.log(err);
-            }
-        });
+        // 插入data：数组数据
+        // data.forEach(async ({question, answer}) => {
+        //     try {
+        //         const sql = `INSERT INTO quizs (question, answer) VALUES (?, ?)`;
+        //         let [result, field] = await insertData(sql, [question, answer]);
+        //         console.log(result);
+        //         console.log(field);
+        //     } catch (err) {
+        //         console.log(err);
+        //     }
+        // });
 
-        async function insertData(sql, params) {
-            const [result, field] = await connection.query(sql, params);
-            console.log(result, field)
-            return [result, field];
-        }
+        // async function insertData(sql, params) {
+        //     const [result, field] = await connection.query(sql, params);
+        //     console.log(result, field)
+        //     return [result, field];
+        // }
+
         // 插入一个用户
-        // const sql = `INSERT INTO users(username, password) VALUES(?, ?)`;
-        // const [result, fields] = await connection.query(sql, ["haosheng", "123456"])
-        // console.log(result);
-        // console.log(fields)
+        const sql = `INSERT INTO users(username, password, password_hash, salt) VALUES(?, ?, ?,?)`;
+        function createUser(username, password) {
+          return {
+            username: username,
+            password: password
+          }
+        }
+        let user = createUser("gaoxiang", "123456") // user: obj
+        function hashPassword(userPassword) {
+          return new Promise((resolve, reject) => {
+            hash({password: user.password}, function(err, pass, salt, hash) {
+              if(err) return reject(err);
+              resolve({hash, salt})
+            })
+          })
+        }
+
+        const { salt, hash: password_hash } = await hashPassword(user.password);
+        user.salt = salt;
+        user.password_hash = password_hash
+        const {username, password, password_hash:hashValue, salt:saltValue} = user;
+        console.log(user); // 查看user是否存在
+        const column  = [username, password, hashValue, saltValue]
+        const [result, fields] = await connection.query(sql, column)
+        console.log(result);
+        console.log(fields)
     } finally {
         // 结束连接
         await connection.end();  // 使用 await

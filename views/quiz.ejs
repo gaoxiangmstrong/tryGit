@@ -13,13 +13,31 @@
         <p class="num">卡片数量</p>
         <button class="deleteBtn">删除</button>
         <button class="next">下一个</button>
+        <button class="studiedBtn">已学习</button>
+
+        <p>下面是记忆曲线功能</p>
+        <ul>
+            <li>
+                <div>20分钟后复习</div>
+            </li>
+            <li>
+                <div>3天之后复习</div>
+            </li>
+            <li>
+                <div>7天之后复习</div>
+            </li>
+            <li>
+                <div>一个月之后复习</div>
+            </li>
+        </ul>
     </div>
 
     <script>
-        let btn = document.querySelector('.next')
+        let nextBtn = document.querySelector('.next')
         let container = document.querySelector('.container')
         let numOfcards = document.querySelector('.num')
         let counter = 0
+        
 
         async function getData(url) {
             let res = await fetch(url)
@@ -30,6 +48,9 @@
         window.onload = async function() {
             // 初始数据
             let data = await getData('http://localhost:3000/')
+            // 获取每个数据的id
+            let cardId = data[counter].id
+            console.log(cardId)
             numOfcards.innerText = `现在是第：${counter}个问题`
             // 
             let cardsHTML = getHTMLData(data) // 数组
@@ -56,20 +77,23 @@
                 ).join('\n')
             }
             container.innerHTML = cardsHTML
-            btn.addEventListener('click', ()=> {
+           
+            // 更新按钮
+            nextBtn.addEventListener('click', ()=> {
                 // 更新卡片
                 counter++
                 numOfcards.innerText = `现在是第：${counter}个问题`
                 let cardsHTML = getHTMLData(data)
                 container.innerHTML = cardsHTML
                 // 更新删除按钮ID
-                delBtn.id = card.id
+                delBtn.id = data[counter].id
+                studiedBtn.id = data[counter].id
             })
 
             // 给页面的卡片的删除按钮添加这个卡片的ID
             let delBtn = document.querySelector('.deleteBtn')
             var card = document.querySelector('.cardId')
-            delBtn.id = card.id
+            delBtn.id = cardId
             delBtn.addEventListener('click', function() {
                 fetch("/delete", {
                     method: 'DELETE',
@@ -84,6 +108,14 @@
                     }
                 })
             })
+            // 给已学习按钮配上card.id
+            var studiedBtn = document.querySelector('.studiedBtn')
+            studiedBtn.id = data[counter].id
+            studiedBtn.addEventListener('click', function(event){
+                // 把这个按钮所属的颜色改为绿色
+
+            })
+            
         }
 
     </script>
